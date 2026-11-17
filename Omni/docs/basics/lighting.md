@@ -58,13 +58,14 @@ Radial は遠くの物を手前に寄せて描きます。
 
 ## 照明に関わる部品
 
-照明の値を Radial に合わせる部品は、表示の親（Root）に付けます。
+焼き込んだ照明を、動かした場所でも正しく読むための部品があります。
+詳しくは [照明の空間をそろえる部品](lighting-spaces.md)、手順は [使い方](../guides/light-probe-space.md) を見てください。
 
-| 部品 | 役割 |
-|---|---|
-| `OmniLightProbeSpace` ＋ `OmniLightProbeSpaceRequirement` | Light Probe（焼き込んだ周りの明るさ）を、焼いた場所に合わせて読む |
-| `OmniAdaptiveProbeVolumeSpace` ＋ `OmniAdaptiveProbeVolumeSpaceRequirement` | APV（自動で並ぶ Light Probe）を同じく合わせる |
-| `OmniLightingSpace` | 照明の空間を決める |
+| 部品 | 役割 | 付ける場所 |
+|---|---|---|
+| `OmniLightProbeSpace` ＋ `OmniLightProbeSpaceRequirement` | Light Probe（焼き込んだ周りの明るさ）を、焼いた場所に戻して読む（Scene BRG の物だけ） | 表示の Root（動かす部屋の親） |
+| `OmniAdaptiveProbeVolumeSpace` ＋ `OmniAdaptiveProbeVolumeSpaceRequirement` | APV（自動で並ぶ Light Probe）を、焼いた場所に戻して読む（位置のずれだけ） | 同じ表示の Root（Volume も付ける） |
+| `OmniLightingSpace` | Logical の正確な住所と、焼き込み用の小さな空間の位置を行き来する（今は開発用の Lightmap と検証 Scene だけ） | 照明の検証用の物 |
 
 !!! warning "つまずきやすい点"
     - Lightmap・Light Probe・Reflection Probe は、原点の近く（安全域 1 万 m の内側）で焼いてください。

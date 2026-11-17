@@ -5,6 +5,9 @@ repo_url: https://github.com/AloneCraft/Document
 repo_name: AloneCraft/Document
 docs_dir: docs
 site_dir: site
+# API の各ページは nav に並べず、api/index.md の一覧からたどる。
+not_in_nav: |
+  /api/**
 
 theme:
   name: material
@@ -77,9 +80,13 @@ nav:
       - 描く道筋（Renderer と BRG）: basics/rendering-paths.md
       - シェーダーの変換: basics/shader-conversion.md
       - 照明と「止める」考え方: basics/lighting.md
+      - 照明の空間をそろえる部品: basics/lighting-spaces.md
       - クリックで選ぶ（Picking）: basics/picking.md
       - VirtualGeometry（地形の描き方）: basics/virtual-geometry.md
       - フォルダの地図: basics/folders.md
+  - 使い方:
+      - guides/index.md
+      - Light Probe と APV を正しく読む: guides/light-probe-space.md
   - デモの部品:
       - demos/index.md
       - Earth（地球）:
@@ -103,3 +110,5 @@ nav:
       - 良いところ・苦手なところ: outlook/pros-cons.md
       - 限界と対応環境: outlook/limits.md
       - これから: outlook/roadmap.md
+  - API リファレンス:
+      - api/index.md

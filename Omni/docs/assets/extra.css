@@ -66,6 +66,27 @@ figure.caption figcaption {
   color: var(--md-default-fg-color--light);
 }
 
+/* 使い方のページの動画（2 本並べる。狭い画面では縦に並べる） */
+.video-pair {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+.video-pair figure { margin: 0; }
+figure.caption video {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  border: 1px solid var(--md-default-fg-color--lightest);
+}
+
+/* Unity の画面の画像 */
+figure.shot img {
+  max-width: min(100%, 480px);
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 4px;
+}
+
 /* 部品カードの見出し表 */
 .part-table td:first-child {
   white-space: nowrap;
