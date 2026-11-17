@@ -38,5 +38,7 @@ python -I tools/generate_omni_api.py G:/Unity/6.6/Omni
 `Assets/Omni/Development/Verification/Editor/LightingDocumentationCapture.cs` で撮ったものです。
 
 - 動画：`LightingVerificationSceneBuilder.CaptureDocumentationVideosBatch`（バッチの Editor で実行。`-docOut <絶対パス>`）
+- はじめにの比較・APV を外から見る動画・Lightmap の比べ撮り：`LightingVerificationSceneBuilder.CaptureDocumentationScenesBatch`（バッチ。`-docOut <絶対パス>`、`-docSteps float,apv,lightmap` で選べる）。`LightingDocumentationCaptureScenes.cs`
+- はじめにの右側（地球）は、Omni の Earth デモの撮影（`TestResults/Earth/`）から選んだもの
 - Inspector の画像：`LightingVerificationSceneBuilder.CaptureDocumentationInspectorAndExit`（画面付きの Editor で実行。窓が前に出る）
 トップの一覧は `index.html` です。文書を足したら、ここと `.github/workflows/pages.yml` にも足します。

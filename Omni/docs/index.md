@@ -1,8 +1,68 @@
 # Omni 入門リファレンス
 
-この文書は、Unity で「とても大きな世界」を描くための仕組み **Omni** の入門書です。
+**宇宙から見た地球から、地面に立つ人の足元まで。1 つの世界として、1 台のカメラでつなげて描く。**
+Omni は、そのための仕組みです。
 
-読む人として、次のような人を想定しています。
+<div class="hero-compare" markdown>
+<div class="hero-col" markdown>
+<p class="hero-label hero-before">今まで（Unity の標準のまま）</p>
+<figure class="caption">
+<video autoplay muted loop playsinline preload="metadata" poster="assets/videos/intro/standard-origin-first.jpg">
+  <source src="assets/videos/intro/standard-origin.mp4" type="video/mp4">
+</video>
+<figcaption>小さな庭を、世界の中心（原点）に置いて歩く。きれいに描ける。</figcaption>
+</figure>
+<figure class="caption">
+<video autoplay muted loop playsinline preload="metadata" poster="assets/videos/intro/standard-far-first.jpg">
+  <source src="assets/videos/intro/standard-far.mp4" type="video/mp4">
+</video>
+<figcaption><strong>同じ庭を、地球の半径ほど（約 640 万 m）離れた場所に置くと</strong>、球は角ばった塊に崩れ、細い柱と人の形は消え、歩くと画面がガタガタ跳ぶ。</figcaption>
+</figure>
+</div>
+<div class="hero-col" markdown>
+<p class="hero-label hero-after">Omni</p>
+<figure class="caption">
+<img src="assets/images/intro/omni-earth-space.jpg" alt="宇宙から見た地球" loading="lazy">
+<figcaption>宇宙から見た地球。</figcaption>
+</figure>
+<figure class="caption">
+<img src="assets/images/intro/omni-earth-3km.jpg" alt="高さ 3 km から見た山脈" loading="lazy">
+<figcaption>そのまま降りて、高さ 3 km の山脈。</figcaption>
+</figure>
+<figure class="caption">
+<img src="assets/images/intro/omni-earth-1.7m.jpg" alt="目の高さ 1.7 m の草地と岩" loading="lazy">
+<figcaption>目の高さ 1.7 m の地面。足元の岩まで、<strong>同じ 1 つの世界・同じ 1 台のカメラ</strong>で描いている。</figcaption>
+</figure>
+</div>
+</div>
+
+<small>撮り方：左は Unity 6.6 と URP の標準の部品（Transform・Camera・URP Lit）だけで作った Scene を、Omni の撮影の道具で描いたもの。右は Omni の Earth デモ（開発中、2026 年 11 月）の画面。</small>
+
+## ゲームを遊ぶ人へ：何がすごいのか
+
+- ふつうのゲームの世界は、広くても**数 km 四方**です。オープンワールドの大きな地図でも、たいていこの範囲に収まっています。
+- それより広い世界を作ると、コンピューターの計算の「目盛り」が足りなくなります。物の形が崩れたり、ガタガタ震えたり、奥の物が手前に出てきたりします（上の左の動画）。
+- そのため、宇宙と地上が出てくるゲームの多くは、**場面を切り替え**たり、**遠くの物を絵（背景）でごまかし**たりしています。
+- Omni は、地球の大きさでも、原子の大きさでも同じ細かさで位置を覚え、遠くの物は縮めて描きます。だから、**宇宙から地上まで、切り替えなしにそのまま降りられます**（上の右）。
+
+!!! info "Unity とは"
+    **Unity** は、ゲームを作るための道具（ゲームエンジン）です。スマホゲームから家庭用ゲームまで、世界中で使われています。
+    Omni は Unity に**足して使う拡張**で、Unity の中で「とても大きな世界」を描けるようにします。
+    この文書に出てくる Unity の言葉（Scene、GameObject、コンポーネントなど）は、[用語集](glossary.md) で短く説明しています。
+
+## この文書の 3 つの部分
+
+| 部分 | こんな人に | 入口 |
+|---|---|---|
+| **説明**（しくみ） | 何が出来るのか、なぜ必要なのかを知りたい。Unity を知らなくても読める | [なぜ必要か](basics/why.md) → [Omni の基本](basics/index.md) |
+| **使い方**（手順） | 自分の Scene で、部品を付けて動かしたい（Unity を使う人向け） | [使い方](guides/index.md) |
+| **API リファレンス** | スクリプトから Omni を呼びたい（プログラマー向け） | [API リファレンス](api/index.md) |
+
+デモで使っている部品の役割は [デモの部品](demos/index.md)、得意・苦手と将来は [見通し](outlook/index.md) にあります。
+
+## Unity を使っている人へ
+
+ここから先は、次のような人を想定しています。
 
 - Unity でゲームを作り始めて 1 年くらい。
 - `Transform`、`Camera`、`Material`、`Shader` という言葉は聞いたことがある。

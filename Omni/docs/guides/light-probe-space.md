@@ -5,30 +5,40 @@
 
 ## まず違いを見る
 
-下の 2 本は、同じ部屋（表示の Root）を遠くへ動かしている動画です。カメラも部屋と一緒に動くので、正しければ**見た目は変わらない**はずです。
+下の 2 本は、部屋（表示の Root）を**横へ 16.8 m 動かす**動画です。
+カメラは部屋の外にあって**動きません**。手前の格子の床と、奥の黄色い柱も動きません。部屋だけが、その前を右へ滑っていきます。
 
 <div class="video-pair" markdown>
 <figure class="caption">
-<video autoplay muted loop playsinline preload="metadata" poster="../../assets/videos/lighting/apv-without-space-first.png">
-  <source src="../../assets/videos/lighting/apv-without-space.mp4" type="video/mp4">
+<video autoplay muted loop playsinline preload="metadata" poster="../../assets/videos/lighting/apv-outside-without-space-first.jpg">
+  <source src="../../assets/videos/lighting/apv-outside-without-space.mp4" type="video/mp4">
 </video>
-<figcaption><strong>部品なし</strong>：部屋が動くと、APV を違う場所で読み、明るさが変わってしまう。</figcaption>
+<figcaption><strong>部品なし</strong>：部屋が動くにつれ、中の球が暗く青くなる。APV の格子が付いて来ず、球が焼いたのと違う場所の明るさを読んでいる。</figcaption>
 </figure>
 <figure class="caption">
-<video autoplay muted loop playsinline preload="metadata" poster="../../assets/videos/lighting/apv-with-space-first.png">
-  <source src="../../assets/videos/lighting/apv-with-space.mp4" type="video/mp4">
+<video autoplay muted loop playsinline preload="metadata" poster="../../assets/videos/lighting/apv-outside-with-space-first.jpg">
+  <source src="../../assets/videos/lighting/apv-outside-with-space.mp4" type="video/mp4">
 </video>
-<figcaption><strong>部品あり</strong>（<code>OmniAdaptiveProbeVolumeSpace</code>）：部屋が動いても、焼いた場所で読むので明るさが変わらない。</figcaption>
+<figcaption><strong>部品あり</strong>（<code>OmniAdaptiveProbeVolumeSpace</code>）：部屋が動いても、球は焼いた場所の明るさを読むので変わらない。</figcaption>
 </figure>
 </div>
 
-見るところは**真ん中の球**です。球だけが APV（焼いた明るさのメモ）で照らされています。壁と床は Lightmap なので、どちらの動画でも変わりません。
+見るところは**部屋の中の球**です。球は APV（焼いた明るさの格子）で照らされています。
 
-- 部品なし：部屋が動くにつれ、球が黄色から青へ変わります。APV の格子の、焼いたのとは違う場所を読んでいるからです。
-- 部品あり：球の色は最後まで同じです（画面中央の明るさの差は 0.00001 未満）。
+| | 動かす前 | 動かした後 |
+|---|---|---|
+| 部品なし | 0.86 | **0.37**（暗くなる） |
+| 部品あり | 0.86 | 0.83（ほぼ同じ） |
 
-動画は、Omni の照明の見本 Scene `Assets/Omni/Development/Scenes/Lighting/AdaptiveProbeVolumes.unity` を撮ったものです。
-部屋（`Finite Bake Space`）を 1 秒止めてから、3 秒かけて (74, 364, −2419) m だけ動かしています。
+（数字は、球が写る場所の明るさ。0 が黒、1 が白。）
+
+動画は、Omni の照明の見本 Scene `Assets/Omni/Development/Scenes/Lighting/AdaptiveProbeVolumes.unity` を、撮影の道具が外のカメラと床・柱を一時的に足して撮ったものです（Scene は保存していません）。
+部屋（`Finite Bake Space`）を 1 秒止めてから、3 秒かけて動かしています。
+
+!!! tip "Lightmap は何もしなくてよい"
+    壁や床に焼き込んだ Lightmap は、物に貼り付いているので、部屋を動かすと一緒に付いて来ます。部品は要りません。
+    部品が要るのは、**空間に置いた明るさのメモ**を読む Light Probe と APV だけです。
+    確かめた結果は [Lightmap は部品なしで付いて来る](../basics/lighting-spaces.md#lightmap) にあります。
 
 ## 始める前に
 

@@ -10,6 +10,7 @@ Omni では物を描く位置が動くことがあるので、「今の位置」
 | [`OmniAdaptiveProbeVolumeSpace`](#omniadaptiveprobevolumespace) | APV を、焼いた場所に戻して読む | 同じ Root（Volume も付ける） |
 | [`OmniAdaptiveProbeVolumeSpaceRequirement`](#requirement) | 「この Root には APV の部品が要る」という約束 | 同じ Root |
 | [`OmniLightingSpace`](#omnilightingspace) | Logical の正確な住所と、焼き込み用の小さな空間を行き来する | 照明の検証用の物 |
+| （部品なし） | [Lightmap は物に貼り付いて、部屋と一緒に動く](#lightmap) | — |
 
 手順は [使い方：Light Probe と APV を正しく読む](../guides/light-probe-space.md) を、名前の一覧は [API リファレンス](../api/Omni.Lighting.md) を見てください。
 
@@ -67,6 +68,97 @@ flowchart TD
   C --> D["Light Probe を読む<br>（GetInterpolatedProbe）"]
   D --> E["明るさを BRG のデータへ"]
 ```
+
+## Hierarchy のどこに、何を付けるか
+
+見本の Scene `AdaptiveProbeVolumes.unity` の Hierarchy（親子の一覧）を、そのまま図にしました。
+**色の付いた部品**が Omni の部品です。右の矢印は、その部品で何が働くかを示します。
+
+<figure class="caption">
+<svg class="fig" viewBox="0 0 760 520" width="760" role="img" aria-label="見本 Scene の Hierarchy と、付ける部品と働く機能">
+  <defs><marker id="arrHier" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="fc"/></marker></defs>
+  <text x="20" y="28" font-size="15" font-weight="700">Hierarchy</text>
+  <text x="430" y="28" font-size="15" font-weight="700">働く機能</text>
+  <text x="20" y="62" font-size="14">▾ Omni Lighting Space</text>
+  <text x="200" y="62" font-size="12" class="muted">OmniLightingSpace</text>
+  <rect x="34" y="78" width="370" height="150" rx="8" class="b" stroke-width="2"/>
+  <text x="44" y="100" font-size="14" font-weight="700">▾ Finite Bake Space（表示の Root）</text>
+  <text x="58" y="124" font-size="12">Volume（Global・Weight 1・Priority 最大）</text>
+  <text x="58" y="144" font-size="12">OmniLightProbeSpace ＋ Requirement</text>
+  <text x="58" y="164" font-size="12">OmniAdaptiveProbeVolumeSpace ＋ Requirement</text>
+  <text x="58" y="190" font-size="11" class="muted">← この Root を動かすと、下の物が全部一緒に動く</text>
+  <text x="58" y="212" font-size="11" class="muted">（部品はこの Root に 1 か所だけ付ける）</text>
+  <g font-size="13">
+    <text x="58" y="252">Floor / Walls / Ceiling …… 部屋（動かない物）</text>
+    <text x="58" y="276">Warm GI Source / Cool GI Source …… 焼き込み用の光</text>
+    <text x="58" y="300">Adaptive Probe Volume …… APV の格子の範囲</text>
+    <text x="58" y="324">Dynamic Receiver Light Probes …… Light Probe の点</text>
+    <text x="58" y="348">Standard and Omni APV Witness …… 確かめ用の球</text>
+    <text x="58" y="372">Lighting Verification Camera …… カメラ（RadialCamera）</text>
+  </g>
+  <line x1="44" y1="232" x2="44" y2="380" class="ln" stroke-width="1.5"/>
+  <text x="20" y="414" font-size="14">ProbeVolumePerSceneData</text>
+  <text x="20" y="438" font-size="14">APV Verification Controller</text>
+  <text x="20" y="470" font-size="12" class="muted">↑ この 2 つは Root の外。動かさない</text>
+  <rect x="430" y="110" width="310" height="54" rx="8" class="a" stroke-width="2"/>
+  <text x="585" y="133" text-anchor="middle" font-size="13">Light Probe を焼いた場所で読む</text>
+  <text x="585" y="153" text-anchor="middle" font-size="11" class="muted">Scene BRG の物だけ</text>
+  <rect x="430" y="176" width="310" height="54" rx="8" class="a" stroke-width="2"/>
+  <text x="585" y="199" text-anchor="middle" font-size="13">APV を焼いた場所で読む（World Offset）</text>
+  <text x="585" y="219" text-anchor="middle" font-size="11" class="muted">すべての物。位置のずれだけ</text>
+  <rect x="430" y="242" width="310" height="54" rx="8" class="c" stroke-width="2"/>
+  <text x="585" y="265" text-anchor="middle" font-size="13">Lightmap は物に貼り付いて一緒に動く</text>
+  <text x="585" y="285" text-anchor="middle" font-size="11" class="muted">部品は要らない（下の「Lightmap」の節）</text>
+  <path d="M 395 144 C 410 144 415 137 428 137" class="ink" stroke-width="1.5" marker-end="url(#arrHier)"/>
+  <path d="M 395 164 C 410 164 415 203 428 203" class="ink" stroke-width="1.5" marker-end="url(#arrHier)"/>
+  <path d="M 395 252 C 410 252 415 269 428 269" class="ink" stroke-width="1.5" marker-end="url(#arrHier)"/>
+</svg>
+<figcaption>部品は「動かす部屋の親」1 か所に付けます。部屋の中の物 1 つ 1 つに付ける必要はありません。</figcaption>
+</figure>
+
+## APV とは何か、なぜ動かすと困るのか
+
+**APV（Adaptive Probe Volume）** は、Unity 6 の間接光（GI）の仕組みです。
+
+- 動かない物（壁・床）から計算した間接光を、**空間の格子**に保存します。格子の点ひとつひとつが「ここにはどの向きからどんな色の光が来るか」を覚えています。
+- 動く物は、自分のいる場所の格子を読んで、間接光を受け取ります。
+- 格子の細かさは自動で決まります。物が多い所は細かく、何もない所は粗くなります。
+
+**結論**：APV は**空間に固定**されたデータです。部屋の親を動かしても、格子は付いて来ません。
+ただし、**読む位置を「焼いたときの座標」に直してから読めば**、動いた部屋でも正しく照らせます。Omni の `OmniAdaptiveProbeVolumeSpace` がこれをしています。
+
+| | 標準の APV | Omni の部品を付けた APV |
+|---|---|---|
+| 部屋を平行移動 | 格子が付いて来ない。明るさが変わる | 読む位置を直すので、明るさが変わらない |
+| 部屋を回転 | 付いて来ない | **未対応**（今は位置のずれだけ直す） |
+| 部屋を拡大・縮小 | 付いて来ない | **未対応** |
+
+!!! note "格子の点は、物の表面と同じ位置でなくてよい"
+    APV の点は、壁や床の表面にぴったり重なっている必要はありません。
+    大事なのは、**光を作った物（壁・床・光源）と格子の位置と向きの関係**が、焼いたときと同じに保たれることです。
+    だから、部屋と格子を「まとめて」ずらすのは正しく、部屋だけを動かして格子を置いていくと間違います。
+
+!!! info "出典について"
+    「Volume の Transform を動かしても格子は動かない」という Unity の公式の明文は見つけられませんでした。
+    上の説明は、APV の仕様（焼いた結果を世界の位置に保存し、実行時のずらしは `ProbeVolumesOptions.worldOffset` で行う）からの推定と、
+    Omni の見本 Scene での実測（下の動画）にもとづきます。
+
+## 間接光（GI）の技術の比べ方
+
+ゲームの間接光には、いくつかの作り方があります。Omni が扱うのは、このうち Lightmap・Light Probe・APV です。
+
+| 技術 | 光の保存・計算の仕方 | 前もっての焼き込み | 光源を変えたとき | 形を動かす・回すとき | 動く物の間接光 |
+|---|---|---|---|---|---|
+| **Lumen**（Unreal Engine 5） | 光線の追跡と、表面の明るさの一時保存（Surface Cache） | 不要 | ◎ その場で変わる | ◎ 付いて来る（更新に少し遅れ・制限あり） | ◎ |
+| **Enlighten**（Unity の旧リアルタイム GI） | 前もって計算した「見え方」と、実行中の間接光の更新 | 「見え方」の事前計算が必要 | ○ 実行中に更新 | × 動かない形が前提 | ○ Light Probe を通して |
+| **APV**（Unity 6） | 空間の格子に、向きごとの明るさ（SH）を保存 | 必要 | △ Lighting Scenario（明るさの組の切り替え）など | × 標準では固定（Omni は平行移動に対応） | ◎ 格子を読む |
+| **Surface Cache GI**（Unity 6.7・試験中） | 指定した範囲の表面の明るさを一時保存し、実行中に更新 | 不要 | ◎ その場で変わる | ◎ 付いて来る | ◎ 不透明な物だけ |
+| **Lightmap** | 物の表面に貼る画像 | 必要 | × 固定 | 画像は物に貼り付いて動く（Omni で平行移動を確かめ済み）。ただし明るさは更新されない | × これだけでは不可 |
+| **Light Probe** | 空間の点に、向きごとの明るさ（SH）を保存 | 必要 | × 固定 | × 標準では固定（Omni は Scene BRG で平行移動に対応） | ○ 物ごとに 1 つの値 |
+
+- Enlighten は Unity 6 で非推奨になり、焼き込み用の仕組みとしては削除されました。
+- Surface Cache GI は Unity 6.7 の試験中（プレビュー）の機能で、URP 用です。有効にすると、不透明な物には Lightmap と APV の間接光が使われなくなります。
+- 出典：[Unity：実行中に照明を変える（APV）](https://docs.unity3d.com/Manual/urp/probe-volumes-change-lighting-at-runtime.html)、[Unity：ProbeVolumesOptions](https://docs.unity3d.com/Packages/com.unity.render-pipelines.core@17.2/api/UnityEngine.Rendering.ProbeVolumesOptions.html)、[Unity：Surface Cache GI の Volume 設定](https://docs.unity.com/en-us/engine/6000.7/manual/lighting-overview/lighting/surface-cache-gi-volume-override-reference)、[Unity 6 への移行ガイド](https://docs.unity.com/en-us/engine/6000.0/manual/upgrade-guides/upgrade-guide-unity6.md)、[Epic：Lumen の技術的な詳細](https://dev.epicgames.com/documentation/en-us/unreal-engine/lumen-technical-details-in-unreal-engine)（2026 年 11 月に確認）。
 
 ---
 
@@ -186,6 +278,40 @@ Inspector のボタンのほかに、スクリプトから部品と札をまと�
 | [`OmniAdaptiveProbeVolumeSpaceAuthoring.TryEnsureContract`](../api/Omni.Editor.BatchRendering.OmniAdaptiveProbeVolumeSpaceAuthoring.md) | 上に加えて、APV の部品・札・Volume を条件どおりに付ける。途中で失敗したら元に戻す |
 
 どちらも Scene に印を付けますが（dirty）、保存はしません。
+
+---
+
+## Lightmap は部品なしで付いて来る { #lightmap }
+
+**結論**：Lightmap（焼き込んだ明るさを物の表面に貼る画像）は、**部品を足さなくても**、部屋を動かしたときに正しく付いて来ます。
+Legacy Renderer でも Scene BRG でも同じです。
+
+**理由**：Lightmap は「物の表面のどこに、画像のどこを貼るか」という対応（UV）で読みます。世界の位置は使いません。
+Scene BRG も、Unity と同じく画像の番号と貼る場所（`unity_LightmapIndex`、`unity_LightmapST`）だけを渡しています。
+だから、部屋ごと動かしても、壁は焼いたときと同じ明るさのままです。
+
+**確かめた結果**（Omni の Lightmap の見本 Scene `Lightmaps.unity`。部屋の表示の Root を動かし、部屋と一緒に動くカメラで撮って比べた）：
+
+<div class="video-pair" markdown>
+<figure class="caption">
+<img src="../../assets/images/lighting/lightmap-brg-origin.jpg" alt="動かす前" loading="lazy">
+<figcaption>動かす前（Scene BRG）。</figcaption>
+</figure>
+<figure class="caption">
+<img src="../../assets/images/lighting/lightmap-brg-moved.jpg" alt="(74, 364, -2419) m 動かした後" loading="lazy">
+<figcaption>(74, 364, −2419) m 動かした後。見分けがつかない。</figcaption>
+</figure>
+</div>
+
+| 描く道筋 | 平行移動 (74, 364, −2419) m | 90° 回転 |
+|---|---|---|
+| Legacy Renderer | 違う画素 0.06%（最大 12/255） | 違う画素 1.06%（最大 13/255） |
+| Scene BRG（9 個の Renderer すべてを BRG が受け持ち） | 違う画素 0.06%（最大 13/255） | 違う画素 1.06%（最大 13/255） |
+
+- 平行移動は、ほぼ完全に一致します。
+- 回転では、**真ん中の球の縁**と**右の壁の一部**が、少しだけ変わります。
+  - 球は Light Probe で照らされているため、明るさの向きの情報（SH）が回りません（上の「回転は未対応」と同じ理由）。
+  - 壁の差の原因は、まだ確定していません。向きつき Lightmap（明るさの来る向きを世界の向きで覚えている）か、空の映り込みが世界に固定されているためと推測しています。
 
 ---
 

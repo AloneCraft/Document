@@ -6,6 +6,17 @@ Omni はこの 2 つを別々の方法で解決します。
 
 ## 困りごと 1：遠くへ行くと物が震える
 
+<div class="video-pair" markdown>
+<figure class="caption">
+<img src="../../assets/images/intro/standard-origin.jpg" alt="原点に置いた小さな庭" loading="lazy">
+<figcaption>原点に置いた小さな庭（Unity の標準のまま）。</figcaption>
+</figure>
+<figure class="caption">
+<img src="../../assets/images/intro/standard-far.jpg" alt="約 640 万 m 離れた場所に置いた同じ庭" loading="lazy">
+<figcaption>同じ庭を約 640 万 m 離れた場所に置いたもの。位置が 0.5 m 刻みでしか表せず、形が崩れる。</figcaption>
+</figure>
+</div>
+
 Unity の `Transform.position` は `float` です。
 `float` は「だいたい 7 桁」までしか正確に覚えられません。
 桁が大きくなるほど、小数点以下に使える桁が減ります。

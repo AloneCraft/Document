@@ -66,6 +66,31 @@ figure.caption figcaption {
   color: var(--md-default-fg-color--light);
 }
 
+/* はじめにの比較（左：今まで、右：Omni。狭い画面では縦に並べる） */
+.hero-compare {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.2rem;
+  margin: 1rem 0 0.5rem;
+}
+.hero-col figure { margin: 0 0 0.8rem; }
+.hero-col img, .hero-col video {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  border: 1px solid var(--md-default-fg-color--lightest);
+}
+.hero-label {
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin: 0 0 0.4rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  display: inline-block;
+}
+.hero-before { background: #8a3b3b; color: #fff; }
+.hero-after { background: #2f6f4f; color: #fff; }
+
 /* 使い方のページの動画（2 本並べる。狭い画面では縦に並べる） */
 .video-pair {
   display: grid;
