@@ -1,0 +1,73 @@
+/* 図（SVG）の色。明るい表示と暗い表示で切り替える。 */
+:root {
+  --fig-ink: #1f2933;
+  --fig-muted: #52606d;
+  --fig-line: #9aa5b1;
+  --fig-bg: #f5f7fa;
+  --fig-a: #3f51b5;   /* Omni 本体 */
+  --fig-b: #00897b;   /* デモ */
+  --fig-c: #e65100;   /* 注意・失敗 */
+  --fig-d: #6a1b9a;   /* Unity・URP */
+  --fig-a-soft: #e8eaf6;
+  --fig-b-soft: #e0f2f1;
+  --fig-c-soft: #fff3e0;
+  --fig-d-soft: #f3e5f5;
+}
+
+[data-md-color-scheme="slate"] {
+  --fig-ink: #e4e7eb;
+  --fig-muted: #b8c2cc;
+  --fig-line: #616e7c;
+  --fig-bg: #1f2430;
+  --fig-a: #9fa8da;
+  --fig-b: #80cbc4;
+  --fig-c: #ffb74d;
+  --fig-d: #ce93d8;
+  --fig-a-soft: #283050;
+  --fig-b-soft: #1d3b38;
+  --fig-c-soft: #3e2c17;
+  --fig-d-soft: #36233d;
+}
+
+.fig {
+  display: block;
+  margin: 1.2em auto;
+  max-width: 100%;
+  height: auto;
+}
+
+.fig svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.fig text {
+  fill: var(--fig-ink);
+  font-family: inherit;
+}
+
+.fig .muted { fill: var(--fig-muted); }
+.fig .ln { stroke: var(--fig-line); fill: none; }
+.fig .ink { stroke: var(--fig-ink); fill: none; }
+.fig .bg { fill: var(--fig-bg); }
+.fig .a { fill: var(--fig-a-soft); stroke: var(--fig-a); }
+.fig .b { fill: var(--fig-b-soft); stroke: var(--fig-b); }
+.fig .c { fill: var(--fig-c-soft); stroke: var(--fig-c); }
+.fig .d { fill: var(--fig-d-soft); stroke: var(--fig-d); }
+.fig .sa { stroke: var(--fig-a); fill: none; }
+.fig .sb { stroke: var(--fig-b); fill: none; }
+.fig .sc { stroke: var(--fig-c); fill: none; }
+.fig .fa { fill: var(--fig-a); }
+.fig .fb { fill: var(--fig-b); }
+.fig .fc { fill: var(--fig-c); }
+
+figure.caption figcaption {
+  font-size: 0.8rem;
+  color: var(--md-default-fg-color--light);
+}
+
+/* 部品カードの見出し表 */
+.part-table td:first-child {
+  white-space: nowrap;
+  font-weight: 600;
+}

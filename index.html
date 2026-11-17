@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AloneCraft のドキュメント</title>
+<style>
+  :root { --bg: #f5f7fa; --card: #ffffff; --ink: #1f2933; --muted: #52606d; --line: #d9e2ec; --accent: #3f51b5; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #161a23; --card: #1f2430; --ink: #e4e7eb; --muted: #b8c2cc; --line: #323a4a; --accent: #9fa8da; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: system-ui, -apple-system, "Segoe UI", "Hiragino Sans", "Yu Gothic UI", sans-serif; line-height: 1.7; }
+  main { max-width: 760px; margin: 0 auto; padding: 48px 16px; }
+  h1 { font-size: 1.6rem; margin: 0 0 8px; }
+  p.lead { color: var(--muted); margin: 0 0 32px; }
+  a.card { display: block; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 20px 24px; text-decoration: none; color: inherit; margin-bottom: 16px; }
+  a.card:hover { border-color: var(--accent); }
+  a.card h2 { font-size: 1.2rem; margin: 0 0 4px; color: var(--accent); }
+  a.card p { margin: 0; color: var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <h1>AloneCraft のドキュメント</h1>
+  <p class="lead">開発したものの解説をまとめています。</p>
+  <a class="card" href="Omni/">
+    <h2>Omni 入門リファレンス</h2>
+    <p>Unity で原子より小さな物から宇宙全体までを 1 台のカメラで描く仕組み「Omni」と、そのデモの部品を、図を使って平易に説明します。</p>
+  </a>
+</main>
+</body>
+</html>

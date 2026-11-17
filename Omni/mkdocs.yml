@@ -1,0 +1,105 @@
+site_name: Omni 入門リファレンス
+site_description: 巨大な世界を Unity で描く Omni の考え方と、デモで使っている部品を、図を使って平易に説明します。
+site_url: https://alonecraft.github.io/Document/Omni/
+repo_url: https://github.com/AloneCraft/Document
+repo_name: AloneCraft/Document
+docs_dir: docs
+site_dir: site
+
+theme:
+  name: material
+  language: ja
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - navigation.indexes
+    - toc.follow
+    - search.highlight
+    - content.code.copy
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: teal
+      toggle:
+        icon: material/weather-night
+        name: 暗い表示に切り替える
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: teal
+      toggle:
+        icon: material/weather-sunny
+        name: 明るい表示に切り替える
+
+plugins:
+  - search:
+      lang: ja
+
+extra_css:
+  - assets/extra.css
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+
+extra_javascript:
+  - assets/mathjax.js
+  - https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js
+
+nav:
+  - はじめに:
+      - index.md
+      - 読む順番と用語集: glossary.md
+  - Omni の基本:
+      - basics/index.md
+      - なぜ必要か: basics/why.md
+      - Logical（正確な住所録）: basics/logical.md
+      - Radial（遠くほど縮む物差し）: basics/radial.md
+      - 描く道筋（Renderer と BRG）: basics/rendering-paths.md
+      - シェーダーの変換: basics/shader-conversion.md
+      - 照明と「止める」考え方: basics/lighting.md
+      - クリックで選ぶ（Picking）: basics/picking.md
+      - VirtualGeometry（地形の描き方）: basics/virtual-geometry.md
+      - フォルダの地図: basics/folders.md
+  - デモの部品:
+      - demos/index.md
+      - Earth（地球）:
+          - demos/earth/index.md
+          - EarthSurfaceSetup（地形）: demos/earth/surface.md
+          - EarthSkyRenderer（空・大気・雲）: demos/earth/sky.md
+          - EarthGroundScatter（岩と木）: demos/earth/scatter.md
+          - EarthOrbitCamera（カメラ操作）: demos/earth/camera.md
+          - Scene に付かない計算部品: demos/earth/internals.md
+      - Asteria（人工惑星）:
+          - demos/asteria/index.md
+          - 司令塔と照明: demos/asteria/core.md
+          - 惑星と衛星の地表: demos/asteria/surface.md
+          - 構造物と都市: demos/asteria/structures.md
+          - 船と宇宙の構造物: demos/asteria/ships.md
+          - 物語・音・カメラ: demos/asteria/story.md
+      - ほかのデモ: demos/others.md
+  - 見通し:
+      - outlook/index.md
+      - 考え方: outlook/philosophy.md
+      - 良いところ・苦手なところ: outlook/pros-cons.md
+      - 限界と対応環境: outlook/limits.md
+      - これから: outlook/roadmap.md

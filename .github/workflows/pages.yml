@@ -1,0 +1,49 @@
+name: Docs site (GitHub Pages)
+
+# トップの一覧（index.html）と、各文書（MkDocs）を組み立てて GitHub Pages へ公開する。
+# 公開の形: https://alonecraft.github.io/Document/ が一覧、/Document/Omni/ が Omni の文書。
+# リポジトリの Settings → Pages の Source を「GitHub Actions」にしておく。
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install MkDocs
+        run: python -m pip install -r requirements.txt
+      - name: Build (warnings are errors)
+        run: |
+          mkdir -p _site
+          cp index.html _site/
+          python -m mkdocs build --strict -f Omni/mkdocs.yml -d "$PWD/_site/Omni"
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
