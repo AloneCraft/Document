@@ -77,40 +77,42 @@ Unity は、ふつう数 km くらいの広さの世界を作るように出来�
 Omni は、この限界を 2 つの工夫で越えます。
 
 <figure class="caption">
-<svg class="fig" viewBox="0 0 720 260" width="720" role="img" aria-label="Omni の 2 つの工夫：正確な住所録と、遠くほど縮む物差し">
+<svg class="fig" viewBox="0 0 720 260" width="720" role="img" aria-label="Omni の 2 つの工夫：正確な住所録と、カメラからの距離を対数で写す物差し">
   <rect x="10" y="10" width="340" height="240" rx="14" class="a" stroke-width="2"/>
   <text x="180" y="44" text-anchor="middle" font-size="20" font-weight="700">① Logical</text>
   <text x="180" y="70" text-anchor="middle" font-size="15" class="muted">正確な住所録</text>
   <rect x="50" y="90" width="260" height="130" rx="6" class="bg" stroke="currentColor" stroke-opacity=".2"/>
-  <text x="66" y="118" font-size="14">地球 …… 1.496×10¹¹ m 先</text>
-  <text x="66" y="146" font-size="14">月の岩 …… 3.84×10⁸ m 先</text>
+  <text x="66" y="118" font-size="14">太陽 …… 1.496×10¹¹ m 先</text>
+  <text x="66" y="146" font-size="14">月 …… 3.84×10⁸ m 先</text>
   <text x="66" y="174" font-size="14">足元の小石 …… 0.003 m 先</text>
   <text x="66" y="202" font-size="13" class="muted">どこでも同じ細かさで記録</text>
   <rect x="370" y="10" width="340" height="240" rx="14" class="b" stroke-width="2"/>
   <text x="540" y="44" text-anchor="middle" font-size="20" font-weight="700">② Radial</text>
-  <text x="540" y="70" text-anchor="middle" font-size="15" class="muted">遠くほど目盛りが詰まる物差し</text>
-  <line x1="400" y1="160" x2="690" y2="160" class="ink" stroke-width="2"/>
+  <text x="540" y="70" text-anchor="middle" font-size="15" class="muted">遠い距離ほど縮めて描く物差し</text>
+  <text x="540" y="105" text-anchor="middle" font-size="14">カメラからの距離を対数で写す</text>
+  <text x="540" y="127" text-anchor="middle" font-size="12">例：View Scale M = 1</text>
+  <line x1="400" y1="160" x2="680" y2="160" class="ink" stroke-width="2"/>
   <g class="ink" stroke-width="2">
-    <line x1="400" y1="150" x2="400" y2="170"/><line x1="490" y1="150" x2="490" y2="170"/>
-    <line x1="560" y1="150" x2="560" y2="170"/><line x1="610" y1="150" x2="610" y2="170"/>
-    <line x1="645" y1="150" x2="645" y2="170"/><line x1="668" y1="150" x2="668" y2="170"/>
-    <line x1="682" y1="150" x2="682" y2="170"/><line x1="690" y1="150" x2="690" y2="170"/>
+    <line x1="400" y1="150" x2="400" y2="170"/><line x1="422" y1="150" x2="422" y2="170"/>
+    <line x1="466" y1="150" x2="466" y2="170"/><line x1="532" y1="150" x2="532" y2="170"/>
+    <line x1="598" y1="150" x2="598" y2="170"/><line x1="664" y1="150" x2="664" y2="170"/>
   </g>
-  <text x="400" y="195" text-anchor="middle" font-size="12">0</text>
-  <text x="490" y="195" text-anchor="middle" font-size="12">1 m</text>
-  <text x="560" y="195" text-anchor="middle" font-size="12">1 km</text>
-  <text x="610" y="195" text-anchor="middle" font-size="12">10⁶</text>
-  <text x="652" y="215" text-anchor="middle" font-size="12">… 宇宙の端</text>
-  <text x="540" y="110" text-anchor="middle" font-size="14">近くは広く、遠くは詰めて</text>
-  <text x="540" y="130" text-anchor="middle" font-size="14">1 枚の画面に全部おさめる</text>
+  <text x="400" y="192" text-anchor="middle" font-size="12">0</text>
+  <text x="422" y="210" text-anchor="middle" font-size="12">1</text>
+  <text x="466" y="192" text-anchor="middle" font-size="12">7</text>
+  <text x="532" y="192" text-anchor="middle" font-size="12">63</text>
+  <text x="598" y="192" text-anchor="middle" font-size="12">511</text>
+  <text x="664" y="192" text-anchor="middle" font-size="12">4095 m</text>
+  <text x="690" y="232" text-anchor="end" font-size="12">さらに遠くへ →</text>
 </svg>
 <figcaption>Omni の 2 本柱。① で「どこにあるか」を正確に覚え、② で「どう見せるか」を決めます。</figcaption>
 </figure>
 
 1. **Logical（ロジカル）**：物の位置を、とても細かく正確に記録する「住所録」です。
    Unity の `Transform` は、この住所録から作った「表示用の写し」になります。
-2. **Radial（ラディアル）**：カメラから遠いほど目盛りが詰まる「物差し」です。
-   近くの物は大きく、遠くの物は縮めて、1 枚の画面と 1 枚の奥行きにおさめます。
+2. **Radial（ラディアル）**：カメラからの距離を対数で写す「物差し」です。
+   近い距離はほぼ比例し、遠い距離ほど強く圧縮します。上の目盛りは M = 1 の例で、数値は実際の距離です。
+   近くから非常に遠くまでを、1 台のカメラで描きやすくします。
 
 ## 全体の地図
 
