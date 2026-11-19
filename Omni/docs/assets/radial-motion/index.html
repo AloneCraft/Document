@@ -60,16 +60,17 @@ figcaption{margin-top:12px;color:#3b506a}p{max-width:76ch}input{width:min(100%,5
 <figcaption>各段の表示倍率は比較しやすいように調整しています。</figcaption>
 </figure>
 <h2 id="unity-videos">Unity で見る Radial オン・オフ</h2>
-<p>720p・30 fps。<a href="?codec=h264#unity-videos">H.264 で開く</a></p>
+<p>720p・30 fps。<a href="?codec=h265#unity-videos" data-codec-switch>H.265 で開く</a></p>
 <p>各組は同じ位置、向き、画角で撮影しました。左は距離の写像をオフ、右は Radial をオンにした M = 1 の映像です。同じ視点から見ると、位置や輪郭はおおむね重なります。</p>
 <div id="comparison-videos"></div>
 <h2 id="overhead-videos">Game View と俯瞰の同時撮影</h2>
 <p>左は Play 中の Game View。右は、そのカメラの真上を一定の高さで追従する Scene View です。右の青い線は変形前のワイヤーフレーム、色の付いた形は変形後です。</p>
-<p>右画面の中央が圧縮の基準です。カメラが移動すると、その基準に対してどの部分が近づき、どの部分が詰まるかを追えます。<a href="?codec=h264#overhead-videos">H.264 で開く</a></p>
+<p>右画面の中央が圧縮の基準です。カメラが移動すると、その基準に対してどの部分が近づき、どの部分が詰まるかを追えます。<a href="?codec=h265#overhead-videos" data-codec-switch>H.265 で開く</a></p>
 <figure class="overhead">
 <h3>Terminal</h3>
 <div class="view-labels"><strong>Game View</strong><strong>Scene View・俯瞰</strong></div>
-<video controls muted playsinline preload="metadata" poster="terminal-overhead-first.png" data-overhead="terminal-overhead" aria-label="Terminal の Game View と俯瞰 Scene View の同時撮影"></video>
+<video controls muted playsinline preload="metadata" poster="terminal-overhead-first.png" src="terminal-overhead-avc.mp4" data-overhead="terminal-overhead" aria-label="Terminal の Game View と俯瞰 Scene View の同時撮影"></video>
+<p><a href="terminal-overhead-avc.mp4">Terminal の動画を直接開く（MP4）</a></p>
 <label for="terminal-seek">Terminal の比較位置 <output>0.0 秒</output></label>
 <input id="terminal-seek" type="range" min="0" max="0" value="0" step="0.03333333333333" disabled>
 <figcaption>球の台と床の縁を目印にすると、ゲームカメラの移動とともに、圧縮後の床や屋根の形が動く様子が分かります。</figcaption>
@@ -77,7 +78,8 @@ figcaption{margin-top:12px;color:#3b506a}p{max-width:76ch}input{width:min(100%,5
 <figure class="overhead">
 <h3>Oasis</h3>
 <div class="view-labels"><strong>Game View</strong><strong>Scene View・俯瞰</strong></div>
-<video controls muted playsinline preload="metadata" poster="oasis-overhead-first.png" data-overhead="oasis-overhead" aria-label="Oasis の Game View と俯瞰 Scene View の同時撮影"></video>
+<video controls muted playsinline preload="metadata" poster="oasis-overhead-first.png" src="oasis-overhead-avc.mp4" data-overhead="oasis-overhead" aria-label="Oasis の Game View と俯瞰 Scene View の同時撮影"></video>
+<p><a href="oasis-overhead-avc.mp4">Oasis の動画を直接開く（MP4）</a></p>
 <label for="oasis-seek">Oasis の比較位置 <output>0.0 秒</output></label>
 <input id="oasis-seek" type="range" min="0" max="0" value="0" step="0.03333333333333" disabled>
 <figcaption>岩と道の並ぶ範囲が、カメラの位置を基準に詰まる様子を、外側の変形前ワイヤーフレームと比較できます。</figcaption>
@@ -152,16 +154,22 @@ eye.addEventListener('input', () => { stopMotion(); draw(); });
 scale.addEventListener('input', draw);
 draw();
 
-const forceAvc = new URLSearchParams(location.search).get('codec') === 'h264';
+const preferHevc = new URLSearchParams(location.search).get('codec') === 'h265';
+if (preferHevc) {
+  for (const link of document.querySelectorAll('[data-codec-switch]')) {
+    link.search = '';
+    link.textContent = 'H.264 で開く';
+  }
+}
 function loadVideo(video, stem) {
   function useAvc() {
     video.dataset.codec = 'avc';
-    video.src = stem+'-avc.mp4';
+    if (video.getAttribute('src') !== stem+'-avc.mp4') video.src = stem+'-avc.mp4';
   }
   video.addEventListener('error', () => {
     if (video.dataset.codec === 'hevc') useAvc();
   });
-  if (forceAvc || !video.canPlayType('video/mp4; codecs="hvc1.1.6.L93.B0"')) useAvc();
+  if (!preferHevc || !video.canPlayType('video/mp4; codecs="hvc1.1.6.L93.B0"')) useAvc();
   else {
     video.dataset.codec = 'hevc';
     video.src = stem+'-hevc.mp4';
@@ -173,9 +181,9 @@ for (const [title, caption] of [
 ]) {
   const pair = document.createElement('figure');
   pair.className = 'capture-pair';
-  pair.innerHTML = '<div class="comparison-grid"></div><button type="button" disabled>２画面を再生</button>'+
+  pair.innerHTML = '<div class="comparison-grid"></div><button type="button">２画面を再生</button>'+
     '<label>比較位置 <output>0.0 秒</output><input type="range" min="0" max="0" value="0" step="any" disabled></label>'+
-    '<figcaption></figcaption>';
+    '<p role="status" hidden></p><figcaption></figcaption>';
   pair.querySelector('figcaption').textContent = caption;
   const grid = pair.querySelector('.comparison-grid');
   const videos = ['identity','radial'].map((mode,i) => {
@@ -190,7 +198,11 @@ for (const [title, caption] of [
     video.setAttribute('aria-label',label);
     const stem = title.toLowerCase()+'-'+mode+'-hd';
     video.poster = stem+'-first.png';
-    cell.append(strong,video);
+    const direct = document.createElement('a');
+    direct.href = stem+'-avc.mp4';
+    direct.textContent = 'MP4 を直接開く';
+    direct.setAttribute('aria-label',label+' の MP4 を直接開く');
+    cell.append(strong,video,direct);
     grid.append(cell);
     loadVideo(video,stem);
     return video;
@@ -200,6 +212,11 @@ for (const [title, caption] of [
   const button = pair.querySelector('button');
   const slider = pair.querySelector('input');
   const output = pair.querySelector('output');
+  const status = pair.querySelector('[role="status"]');
+  function reportPlaybackError() {
+    status.textContent = '２画面を再生できませんでした。各映像の「MP4 を直接開く」でご覧ください。';
+    status.hidden = false;
+  }
   let duration = 0, playing = false;
   const updateTime = time => { slider.value = time; output.value = time.toFixed(1)+' 秒'; };
   const seek = time => { left.currentTime = right.currentTime = time; updateTime(time); };
@@ -211,7 +228,7 @@ for (const [title, caption] of [
   function update() {
     if (!playing) return;
     const time = left.currentTime;
-    if (left.ended || right.ended || time >= duration) { pause(); seek(duration); return; }
+    if (left.ended || right.ended || (duration > 0 && time >= duration)) { pause(); seek(duration); return; }
     if (Math.abs(time-right.currentTime) > 0.08) right.currentTime = time;
     updateTime(time);
     requestAnimationFrame(update);
@@ -225,16 +242,21 @@ for (const [title, caption] of [
     });
     video.addEventListener('error', () => {
       pause();
-      button.disabled = slider.disabled = true;
+      slider.disabled = true;
+      if (video.error) reportPlaybackError();
     });
   }
   button.addEventListener('click', async () => {
     if (playing) { pause(); return; }
-    seek(left.currentTime >= duration-0.04 ? 0 : left.currentTime);
+    status.hidden = true;
+    if (duration > 0) seek(left.currentTime >= duration-0.04 ? 0 : left.currentTime);
     playing = true;
     button.textContent = '一時停止';
     try { await Promise.all(videos.map(video => video.play())); }
-    catch { pause(); return; }
+    catch {
+      if (playing) { pause(); reportPlaybackError(); }
+      return;
+    }
     requestAnimationFrame(update);
   });
   slider.addEventListener('input', () => { pause(); seek(Number(slider.value)); });

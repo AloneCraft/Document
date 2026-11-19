@@ -76,8 +76,10 @@ Unity は、ふつう数 km くらいの広さの世界を作るように出来�
 それより大きくすると、物が震えたり、奥にある物が手前に出てきたりします。
 Omni は、この限界を 2 つの工夫で越えます。
 
+[Radial の俯瞰動画をこのページで見る](#radial-motion){ .md-button .md-button--primary }
+
 <figure class="caption">
-<svg class="fig" viewBox="0 0 720 260" width="720" role="img" aria-label="Omni の 2 つの工夫：正確な住所録と、カメラからの距離を対数で写す物差し">
+<svg class="fig" viewBox="0 0 720 260" width="720" role="img" aria-label="Omni の 2 つの工夫：正確な住所録と、距離を対数で写す物差し。Radial の描画距離 0、1、2、3、4 に、実距離 0、1、3、7、15 メートルが対応する">
   <rect x="10" y="10" width="340" height="240" rx="14" class="a" stroke-width="2"/>
   <text x="180" y="44" text-anchor="middle" font-size="20" font-weight="700">① Logical</text>
   <text x="180" y="70" text-anchor="middle" font-size="15" class="muted">正確な住所録</text>
@@ -89,21 +91,19 @@ Omni は、この限界を 2 つの工夫で越えます。
   <rect x="370" y="10" width="340" height="240" rx="14" class="b" stroke-width="2"/>
   <text x="540" y="44" text-anchor="middle" font-size="20" font-weight="700">② Radial</text>
   <text x="540" y="70" text-anchor="middle" font-size="15" class="muted">遠い距離ほど縮めて描く物差し</text>
-  <text x="540" y="105" text-anchor="middle" font-size="14">カメラからの距離を対数で写す</text>
-  <text x="540" y="127" text-anchor="middle" font-size="12">例：View Scale M = 1</text>
-  <line x1="400" y1="160" x2="680" y2="160" class="ink" stroke-width="2"/>
-  <g class="ink" stroke-width="2">
-    <line x1="400" y1="150" x2="400" y2="170"/><line x1="422" y1="150" x2="422" y2="170"/>
-    <line x1="466" y1="150" x2="466" y2="170"/><line x1="532" y1="150" x2="532" y2="170"/>
-    <line x1="598" y1="150" x2="598" y2="170"/><line x1="664" y1="150" x2="664" y2="170"/>
+  <text x="540" y="106" text-anchor="middle" font-size="15">F(d) = log₂(1 + d × M)　 M = 1 の例</text>
+  <text x="385" y="137" font-size="13">描画距離</text>
+  <text x="385" y="196" font-size="13">実距離</text>
+  <path d="M432 150H679l-8-5m8 5-8 5 M432 209H679l-8-5m8 5-8 5" fill="none" class="ink" stroke-width="2"/>
+  <g fill="none" class="ink" stroke-width="2"><path d="M445 143v14 M445 202v14"/><path d="M496 143v14 M496 202v14"/><path d="M547 143v14 M547 202v14"/><path d="M598 143v14 M598 202v14"/><path d="M649 143v14 M649 202v14"/></g>
+  <path d="M445 177v22 M496 177v22 M547 177v22 M598 177v22 M649 177v22" fill="none" class="ink" stroke-dasharray="2 3" stroke-opacity=".45"/>
+  <g text-anchor="middle" font-size="14">
+    <text x="445" y="173">0</text><text x="445" y="231">0 m</text>
+    <text x="496" y="173">1</text><text x="496" y="231">1 m</text>
+    <text x="547" y="173">2</text><text x="547" y="231">3 m</text>
+    <text x="598" y="173">3</text><text x="598" y="231">7 m</text>
+    <text x="649" y="173">4</text><text x="649" y="231">15 m</text>
   </g>
-  <text x="400" y="192" text-anchor="middle" font-size="12">0</text>
-  <text x="422" y="210" text-anchor="middle" font-size="12">1</text>
-  <text x="466" y="192" text-anchor="middle" font-size="12">7</text>
-  <text x="532" y="192" text-anchor="middle" font-size="12">63</text>
-  <text x="598" y="192" text-anchor="middle" font-size="12">511</text>
-  <text x="664" y="192" text-anchor="middle" font-size="12">4095 m</text>
-  <text x="690" y="232" text-anchor="end" font-size="12">さらに遠くへ →</text>
 </svg>
 <figcaption>Omni の 2 本柱。① で「どこにあるか」を正確に覚え、② で「どう見せるか」を決めます。</figcaption>
 </figure>
@@ -111,10 +111,28 @@ Omni は、この限界を 2 つの工夫で越えます。
 1. **Logical（ロジカル）**：物の位置を、とても細かく正確に記録する「住所録」です。
    Unity の `Transform` は、この住所録から作った「表示用の写し」になります。
 2. **Radial（ラディアル）**：カメラからの距離を対数で写す「物差し」です。
-   近い距離はほぼ比例し、遠い距離ほど強く圧縮します。上の目盛りは M = 1 の例で、数値は実際の距離です。
+   近い距離はほぼ比例し、遠い距離ほど強く圧縮します。上の図では、描画距離の等間隔の目盛りに、実距離 0、1、3、7、15 m が対応します（M = 1）。
    近くから非常に遠くまでを、1 台のカメラで描きやすくします。
 
-[Terminal と Oasis の Radial 比較動画](assets/radial-motion/index.html)では、オン・オフの見え方と、俯瞰したときの変形を確認できます。
+### Radial の俯瞰動画 { #radial-motion }
+
+左はゲーム内の移動、右は同じカメラを真上から追う Scene View です。青いワイヤーフレームが変形前の輪郭、色の付いた形が変形後です。
+
+<figure class="caption">
+  <video controls playsinline muted preload="none" width="720" style="max-width:100%;height:auto" poster="assets/radial-motion/terminal-overhead-first.png" src="assets/radial-motion/terminal-overhead-avc.mp4" aria-label="Terminal の Game View と俯瞰 Scene View"></video>
+  <figcaption>Terminal</figcaption>
+</figure>
+
+[Terminal の動画を直接開く（MP4）](assets/radial-motion/terminal-overhead-avc.mp4)
+
+<figure class="caption">
+  <video controls playsinline muted preload="none" width="720" style="max-width:100%;height:auto" poster="assets/radial-motion/oasis-overhead-first.png" src="assets/radial-motion/oasis-overhead-avc.mp4" aria-label="Oasis の Game View と俯瞰 Scene View"></video>
+  <figcaption>Oasis</figcaption>
+</figure>
+
+[Oasis の動画を直接開く（MP4）](assets/radial-motion/oasis-overhead-avc.mp4)
+
+[Radial オン・オフの同期比較と距離の図](assets/radial-motion/index.html#unity-videos)
 
 ## 全体の地図
 
