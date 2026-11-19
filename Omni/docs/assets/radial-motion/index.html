@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Radial の距離の写像 | Omni 入門リファレンス</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f3f6fa;color:#14243a;font:16px/1.75 system-ui,sans-serif}
+header{background:#213969;color:white;padding:14px max(24px,calc((100% - 1000px)/2))}
+main{max-width:1048px;margin:auto;padding:24px}h1,h2{line-height:1.3}h1{font-size:clamp(26px,4.5vw,44px)}h2{font-size:25px}
+figure{margin:24px 0;background:#fff;border:1px solid #ced9e7;border-radius:16px;padding:clamp(12px,3vw,28px)}
+svg,video{width:100%;height:auto;display:block}video{border-radius:8px;background:#14243a;aspect-ratio:16/9}
+figcaption{margin-top:12px;color:#3b506a}p{max-width:76ch}input{width:min(100%,520px);display:block;accent-color:#0065aa}
+.equations{padding:12px 16px;background:#eef3f9;border-radius:8px}
+.comparison-grid,.view-labels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:12px}
+.capture-pair button{margin:12px 8px 8px 0;padding:4px 9px}.capture-pair output{font-variant-numeric:tabular-nums}
+.overhead video{aspect-ratio:32/9}nav a{margin-right:16px}
+</style>
+</head>
+<body>
+<header>Omni 入門リファレンス</header>
+<main>
+<h1>Radial の描画距離と実距離</h1>
+<nav><a href="../../basics/radial/">Radial の解説へ戻る</a><a href="#unity-videos">Radial オン・オフ比較</a><a href="#overhead-videos">Game View と俯瞰の同時撮影</a></nav>
+<p>Radial は、カメラから見た方向を保ちながら、描画に使う距離を対数で写します。</p>
+<figure>
+<svg id="distance-ruler" viewBox="0 0 820 255" role="img" aria-labelledby="ruler-title ruler-description">
+<title id="ruler-title">等間隔の描画距離と、対応する実距離</title>
+<desc id="ruler-description"></desc>
+<rect x="6" y="28" width="156" height="60" rx="12" fill="#dceefc"/>
+<rect x="6" y="163" width="156" height="60" rx="12" fill="#ffeadb"/>
+<g font-size="21" font-weight="700" text-anchor="middle">
+<text x="84" y="66" fill="#00538e">描画距離 F(d)</text><text x="84" y="201" fill="#92380f">実距離 d</text>
+</g>
+<path d="M190 58H800m-10-6 10 6-10 6" fill="none" stroke="#0065aa" stroke-width="4"/>
+<path d="M190 193H800m-10-6 10 6-10 6" fill="none" stroke="#a23d0c" stroke-width="4"/>
+</svg>
+<p class="equations">F(d) = log₂(1 + d × M)　　d = (2<sup>F(d)</sup> − 1) ÷ M</p>
+<figcaption>M = 1 では、描画距離が 1 増えるごとに、実距離の区間幅は 1、2、4、8 m と増えます。</figcaption>
+</figure>
+<label for="scale">View Scale M</label> <output id="scale-value" for="scale">1</output>
+<input id="scale" type="range" min="-2" max="2" step="1" value="0">
+<p>カメラの近くでは写像がほぼ比例し、実距離がおよそ 1/M に達するあたりから曲がりが目立ちます。</p>
+<h2>カメラを動かすと、どこが縮むか</h2>
+<p>6 m ずつ離れた柱を横から見ます。近づいた柱の間隔は描画上で開き、遠ざかった柱の間隔は詰まります。</p>
+<figure>
+<svg viewBox="0 0 820 225" role="img" aria-label="上は実距離、下は対数写像後の柱の位置">
+<rect x="4" y="26" width="812" height="73" rx="10" fill="#dceefc"/>
+<rect x="4" y="119" width="812" height="73" rx="10" fill="#ffeadb"/>
+<text x="18" y="49" fill="#00538e" font-size="18" font-weight="700">実距離</text>
+<text x="18" y="142" fill="#92380f" font-size="18" font-weight="700">描画距離</text>
+<path d="M165 73H793 M165 166H793" stroke="#8596aa" stroke-width="2"/>
+<path d="M480 53V183" stroke="#2b4566" stroke-width="2" stroke-dasharray="3 5"/>
+<text x="480" y="218" fill="#14243a" font-size="17" text-anchor="middle">カメラ</text>
+<g id="motion-posts"></g>
+</svg>
+<button type="button" id="motion-play" aria-pressed="false">再生</button>
+<label for="eye">カメラ位置</label> <output id="eye-value" for="eye">0.0 m</output>
+<input id="eye" type="range" min="0" max="30" step="0.1" value="0">
+<figcaption>各段の表示倍率は比較しやすいように調整しています。</figcaption>
+</figure>
+<h2 id="unity-videos">Unity で見る Radial オン・オフ</h2>
+<p>720p・30 fps。<a href="?codec=h264#unity-videos">H.264 で開く</a></p>
+<p>各組は同じ位置、向き、画角で撮影しました。左は距離の写像をオフ、右は Radial をオンにした M = 1 の映像です。同じ視点から見ると、位置や輪郭はおおむね重なります。</p>
+<div id="comparison-videos"></div>
+<h2 id="overhead-videos">Game View と俯瞰の同時撮影</h2>
+<p>左は Play 中の Game View。右は、そのカメラの真上を一定の高さで追従する Scene View です。右の青い線は変形前のワイヤーフレーム、色の付いた形は変形後です。</p>
+<p>右画面の中央が圧縮の基準です。カメラが移動すると、その基準に対してどの部分が近づき、どの部分が詰まるかを追えます。<a href="?codec=h264#overhead-videos">H.264 で開く</a></p>
+<figure class="overhead">
+<h3>Terminal</h3>
+<div class="view-labels"><strong>Game View</strong><strong>Scene View・俯瞰</strong></div>
+<video controls muted playsinline preload="metadata" poster="terminal-overhead-first.png" data-overhead="terminal-overhead" aria-label="Terminal の Game View と俯瞰 Scene View の同時撮影"></video>
+<label for="terminal-seek">Terminal の比較位置 <output>0.0 秒</output></label>
+<input id="terminal-seek" type="range" min="0" max="0" value="0" step="0.03333333333333" disabled>
+<figcaption>球の台と床の縁を目印にすると、ゲームカメラの移動とともに、圧縮後の床や屋根の形が動く様子が分かります。</figcaption>
+</figure>
+<figure class="overhead">
+<h3>Oasis</h3>
+<div class="view-labels"><strong>Game View</strong><strong>Scene View・俯瞰</strong></div>
+<video controls muted playsinline preload="metadata" poster="oasis-overhead-first.png" data-overhead="oasis-overhead" aria-label="Oasis の Game View と俯瞰 Scene View の同時撮影"></video>
+<label for="oasis-seek">Oasis の比較位置 <output>0.0 秒</output></label>
+<input id="oasis-seek" type="range" min="0" max="0" value="0" step="0.03333333333333" disabled>
+<figcaption>岩と道の並ぶ範囲が、カメラの位置を基準に詰まる様子を、外側の変形前ワイヤーフレームと比較できます。</figcaption>
+</figure>
+<p><a href="https://www.youtube.com/watch?v=evkwwRQkhFg">ご指定の参考動画（YouTube）</a></p>
+</main>
+<script>
+const scale = document.getElementById('scale');
+const eye = document.getElementById('eye');
+const play = document.getElementById('motion-play');
+const ruler = document.getElementById('distance-ruler');
+const posts = document.getElementById('motion-posts');
+function svg(parent, tag, attributes, text) {
+  const element = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (const [key, value] of Object.entries(attributes)) element.setAttribute(key, value);
+  if (text !== undefined) element.textContent = text;
+  parent.append(element);
+  return element;
+}
+const labels = Array.from({length:5}, (_, i) => {
+  const x = 230 + 130*i;
+  svg(ruler,'path',{d:'M'+x+' 109V176',stroke:'#77879b','stroke-width':3,'stroke-dasharray':'2 7'});
+  for (const [y,color] of [[58,'#0065aa'],[193,'#a23d0c']])
+    svg(ruler,'path',{d:'M'+x+' '+(y-12)+'v24',stroke:color,'stroke-width':4});
+  const style = {'text-anchor':'middle','font-size':25,'font-weight':700,x};
+  svg(ruler,'text',{...style,y:99,fill:'#00538e'},i);
+  return svg(ruler,'text',{...style,y:236,fill:'#92380f'});
+});
+const markers = ['#104f80','#08727a','#5665a6','#8f4875','#a34a21','#615792'].map(fill =>
+  [57,150].map(y => svg(posts,'rect',{y,width:8,height:32,rx:3,fill})));
+function draw() {
+  const multiplier = 10 ** Number(scale.value);
+  const position = Number(eye.value);
+  document.getElementById('scale-value').value = multiplier;
+  document.getElementById('eye-value').value = position.toFixed(1) + ' m';
+  scale.setAttribute('aria-valuetext', String(multiplier));
+  const distances = labels.map((label,i) => {
+    const distance = Number(((2 ** i - 1)/multiplier).toPrecision(6));
+    label.textContent = distance+' m';
+    return distance;
+  });
+  document.getElementById('ruler-description').textContent =
+    '描画距離 0、1、2、3、4 に実距離 ' + distances.join('、') + ' メートルが対応します。';
+  markers.forEach(([linear,radial],i) => {
+    const dx = 6*i-position;
+    linear.setAttribute('x',476+dx*10);
+    radial.setAttribute('x',476+Math.sign(dx)*Math.log2(1+Math.abs(dx)*multiplier)*300/Math.log2(1+30*multiplier));
+  });
+}
+let frame = 0;
+function stopMotion() {
+  cancelAnimationFrame(frame);
+  frame = 0;
+  play.textContent = '再生';
+  play.setAttribute('aria-pressed','false');
+}
+play.addEventListener('click', () => {
+  if (frame) { stopMotion(); return; }
+  const initial = Number(eye.value) >= 30 ? 0 : Number(eye.value);
+  const start = performance.now();
+  play.textContent = '停止';
+  play.setAttribute('aria-pressed','true');
+  function tick(now) {
+    eye.value = Math.min(30, initial+(now-start)*0.005);
+    draw();
+    if (Number(eye.value) >= 30) stopMotion();
+    else frame = requestAnimationFrame(tick);
+  }
+  frame = requestAnimationFrame(tick);
+});
+eye.addEventListener('input', () => { stopMotion(); draw(); });
+scale.addEventListener('input', draw);
+draw();
+
+const forceAvc = new URLSearchParams(location.search).get('codec') === 'h264';
+function loadVideo(video, stem) {
+  function useAvc() {
+    video.dataset.codec = 'avc';
+    video.src = stem+'-avc.mp4';
+  }
+  video.addEventListener('error', () => {
+    if (video.dataset.codec === 'hevc') useAvc();
+  });
+  if (forceAvc || !video.canPlayType('video/mp4; codecs="hvc1.1.6.L93.B0"')) useAvc();
+  else {
+    video.dataset.codec = 'hevc';
+    video.src = stem+'-hevc.mp4';
+  }
+}
+for (const [title, caption] of [
+  ['Terminal','手前の球と奥の屋根を目印にすると、同じ時刻の輪郭がほぼ重なることが分かります。'],
+  ['Oasis','手前の岩やヤシの位置はほぼ重なり、奥の砂丘や植生にかかる霞に違いが見えます。']
+]) {
+  const pair = document.createElement('figure');
+  pair.className = 'capture-pair';
+  pair.innerHTML = '<div class="comparison-grid"></div><button type="button" disabled>２画面を再生</button>'+
+    '<label>比較位置 <output>0.0 秒</output><input type="range" min="0" max="0" value="0" step="any" disabled></label>'+
+    '<figcaption></figcaption>';
+  pair.querySelector('figcaption').textContent = caption;
+  const grid = pair.querySelector('.comparison-grid');
+  const videos = ['identity','radial'].map((mode,i) => {
+    const cell = document.createElement('div');
+    const label = title+' · Radial '+(i ? 'オン' : 'オフ');
+    const strong = document.createElement('strong');
+    strong.textContent = label;
+    const video = document.createElement('video');
+    video.preload = 'metadata';
+    video.muted = true;
+    video.playsInline = true;
+    video.setAttribute('aria-label',label);
+    const stem = title.toLowerCase()+'-'+mode+'-hd';
+    video.poster = stem+'-first.png';
+    cell.append(strong,video);
+    grid.append(cell);
+    loadVideo(video,stem);
+    return video;
+  });
+  document.getElementById('comparison-videos').append(pair);
+  const [left,right] = videos;
+  const button = pair.querySelector('button');
+  const slider = pair.querySelector('input');
+  const output = pair.querySelector('output');
+  let duration = 0, playing = false;
+  const updateTime = time => { slider.value = time; output.value = time.toFixed(1)+' 秒'; };
+  const seek = time => { left.currentTime = right.currentTime = time; updateTime(time); };
+  function pause() {
+    playing = false;
+    videos.forEach(video => video.pause());
+    button.textContent = '２画面を再生';
+  }
+  function update() {
+    if (!playing) return;
+    const time = left.currentTime;
+    if (left.ended || right.ended || time >= duration) { pause(); seek(duration); return; }
+    if (Math.abs(time-right.currentTime) > 0.08) right.currentTime = time;
+    updateTime(time);
+    requestAnimationFrame(update);
+  }
+  for (const video of videos) {
+    video.addEventListener('loadedmetadata', () => {
+      if (!videos.every(v => Number.isFinite(v.duration))) return;
+      duration = Math.min(left.duration,right.duration);
+      slider.max = duration;
+      button.disabled = slider.disabled = false;
+    });
+    video.addEventListener('error', () => {
+      pause();
+      button.disabled = slider.disabled = true;
+    });
+  }
+  button.addEventListener('click', async () => {
+    if (playing) { pause(); return; }
+    seek(left.currentTime >= duration-0.04 ? 0 : left.currentTime);
+    playing = true;
+    button.textContent = '一時停止';
+    try { await Promise.all(videos.map(video => video.play())); }
+    catch { pause(); return; }
+    requestAnimationFrame(update);
+  });
+  slider.addEventListener('input', () => { pause(); seek(Number(slider.value)); });
+}
+for (const video of document.querySelectorAll('video[data-overhead]')) {
+  const slider = video.parentElement.querySelector('input');
+  const output = video.parentElement.querySelector('output');
+  video.addEventListener('loadedmetadata', () => {
+    slider.max = video.duration;
+    slider.disabled = false;
+  });
+  video.addEventListener('timeupdate', () => {
+    slider.value = video.currentTime;
+    output.value = video.currentTime.toFixed(1)+' 秒';
+  });
+  slider.addEventListener('input', () => {
+    video.pause();
+    video.currentTime = Number(slider.value);
+  });
+  loadVideo(video,video.dataset.overhead);
+}
+</script>
+</body>
+</html>
